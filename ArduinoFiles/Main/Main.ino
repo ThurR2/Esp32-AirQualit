@@ -2,8 +2,8 @@
 #include <ArduinoJson.h> 
 //Wifi
 #include <WiFi.h>
-const char* ssid = "REDE";           /* Nome */
-const char* password = "SENHA";      /* Senha */
+const char* ssid = "ArtVivi_2Ghz";           /* Nome */
+const char* password = "4aber7ek7t";      /* Senha */
 WiFiClient wifiClient;
 
 //Lib de MQTT
@@ -32,10 +32,10 @@ float co2;
 float tvoc;
 
 /* -------- Conexão IBM - ESP32 ----------- */
-#define ORG "ORG" /* ID de organização */
-#define DEVICE_TYPE "Componente" /* Insira o nome do componente */
-#define DEVICE_ID "ID do componente" /* Insira o ID */
-#define TOKEN "Token de autenticação"/* Insira o Token */
+#define ORG "t00k24" /* ID de organização */
+#define DEVICE_TYPE "Esp32" /* Insira o nome do componente */
+#define DEVICE_ID "01" /* Insira o ID */
+#define TOKEN "*7NDqD8CbOBNGXEZec"/* Insira o Token */
 /*-------- Comunicação IOT – Não altere essa parte da programação -------- */
 char server[] = ORG ".messaging.internetofthings.ibmcloud.com";
 char authMethod[] = "use-token-auth";
@@ -62,7 +62,18 @@ void setup() {
 }
 
 void loop() {
-
+  sensores();
+  if (!client.loop())
+  {
+    mqttConnect();
+  }
+  String payload = createJsonString();
+  Serial.print("Enviando payload: ");
+  Serial.println(payload);                  /* Escreve a String no monitor Serial */
+  client.publish(eventTopic, (char*) payload.c_str() );  /* Publica a String */
+  cont ++;                                  /* Aumenta em 1 o valor de cont */
+  delay(500);                               /* Aguarda 500 milissegundos */
+  
 
 }
 //printSensorError gets, clears, then prints the errors
@@ -118,6 +129,7 @@ void mqttConnect()
       Serial.print(".");
       delay(500); 
     }
+    Serial.print("Conectado /n");
   }
 }
 
